@@ -9,6 +9,14 @@ export async function middleware(request: NextRequest) {
   // セッションの確認
   const { data: { session } } = await supabase.auth.getSession()
 
+  // ルートパスにアクセスした場合、ログインページにリダイレクト
+  if (request.nextUrl.pathname === '/') {
+    // ログインしていない場合はログインページにリダイレクト
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
+
   // 保護されたルートへのアクセスをチェック
   // ログインしていない場合はログインページにリダイレクト
   if (!session && request.nextUrl.pathname !== '/login') {

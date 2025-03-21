@@ -14,22 +14,7 @@ export default function Home() {
   const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [displayName, setDisplayName] = useState<string>('ユーザー');
   const [logs, setLogs] = useState<any[]>([]);
-  
-  // モックユーザー
-  const mockUser = {
-    id: 'mock-user-id',
-    email: 'dev@example.com'
-  };
-  
-  // ローカルストレージから表示名を取得
-  useEffect(() => {
-    const storedName = localStorage.getItem('mockDisplayName');
-    if (storedName) {
-      setDisplayName(storedName);
-    }
-  }, []);
 
   // ログアウト処理
   const handleLogout = async () => {
@@ -72,11 +57,8 @@ export default function Home() {
             {/* 中央のタイトル */}
             <h1 className="text-xl font-semibold mx-auto text-center">領収書アップロードシステム</h1>
             
-            {/* 右側のユーザー情報とログアウトボタン */}
+            {/* 右側のログアウトボタン */}
             <div className="absolute right-4 flex items-center gap-2">
-              <span className="hidden text-sm md:inline-block">
-                {displayName || mockUser.email}
-              </span>
               <Button
                 variant="ghost"
                 size="icon"
@@ -85,7 +67,6 @@ export default function Home() {
               >
                 <LogOut className="h-4 w-4" />
               </Button>
-              {/* 開発モード表示を削除 */}
             </div>
           </header>
           
@@ -125,49 +106,13 @@ export default function Home() {
   const { supabase, user, loading } = useSupabase();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [displayName, setDisplayName] = useState<string>('');
   const [logs, setLogs] = useState<any[]>([]);
-  
-  // ユーザープロフィールの取得
-  useEffect(() => {
-    const getProfile = async () => {
-      if (!user) return;
-
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('display_name')
-          .eq('id', user.id)
-          .single();
-
-        if (error) {
-          console.error('Error fetching profile:', error);
-          return;
-        }
-
-        if (data) {
-          setDisplayName(data.display_name || '');
-        }
-      } catch (err) {
-        console.error('Error fetching profile:', err);
-      }
-    };
-
-    getProfile();
-  }, [user, supabase]);
 
   // ログアウト処理
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/login');
   };
-  
-  // 初回ログイン時にプロフィール設定ページにリダイレクト
-  useEffect(() => {
-    if (user && !displayName) {
-      router.push('/profile');
-    }
-  }, [user, displayName, router]);
 
   if (loading) {
     return (
