@@ -7,13 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSupabase } from '@/components/supabase-provider'
 import { Mail, Lock, AlertTriangle } from 'lucide-react'
-// 開発アカウントのメールアドレス
-const DEV_EMAIL = 'otsuka.abun@gmail.com'
-
-// 開発者アカウントかどうかを判断する関数
-const isDevAccount = (email: string) => email === DEV_EMAIL
-
-// 開発環境かどうかを判断（参考用に残す）
+// 環境変数
 const isDevelopment = process.env.NODE_ENV === 'development'
 
 export default function LoginPage() {
@@ -24,19 +18,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mode, setMode] = useState<'login' | 'signup'>('login')
-  const [showDevBypass, setShowDevBypass] = useState(false)
-
-  // 開発環境用のバイパスログイン
-  const handleDevBypass = () => {
-    console.log('開発環境用のバイパスログインを実行')
-    // 開発アカウントとしてログイン
-    if (email === DEV_EMAIL) {
-      console.log('開発者アカウントとしてバイパスログイン')
-      router.push('/')
-    } else {
-      setError('開発者アカウント（otsuka.abun@gmail.com）のみがバイパスログインを使用できます')
-    }
-  }
+  // バイパスログイン機能を削除
 
   // ログイン処理
   const handleLogin = async () => {
@@ -60,13 +42,9 @@ export default function LoginPage() {
         console.error('ログインエラー:', error)
         setError(error.message)
         
-        // メール確認エラーの場合、開発者アカウントのみバイパスオプションを表示
-        if (error.message.includes('Email not confirmed') && isDevAccount(email)) {
-          setShowDevBypass(true)
-        } else if (error.message.includes('Email not confirmed')) {
-          setError(`メールアドレスが確認されていません。確認メールを確認してください。
-          
-Supabaseダッシュボードの「Authentication」→「Users」からユーザーを選択し、「Verify Email」ボタンをクリックしてメール確認をスキップできます。`)
+        // メール確認エラーの場合のメッセージ
+        if (error.message.includes('Email not confirmed')) {
+          setError(`メールアドレスが確認されていません。確認メールを確認してください。`)
         }
       } else {
         console.log('ログイン成功:', data)
@@ -113,10 +91,7 @@ Supabaseダッシュボードの「Authentication」→「Users」からユー�
         setMode('login')
         setError(`アカウントが作成されました。メールアドレス「${email}」でログインしてください。
         
-注意: 開発環境では以下のいずれかの方法でメール確認をスキップできます：
-
-1. Supabaseダッシュボードの「Authentication」→「Providers」→「Email」で「Confirm email」をオフにする
-2. Supabaseダッシュボードの「Authentication」→「Users」からユーザーを選択し、「Verify Email」ボタンをクリックする`)
+メール確認が必要な場合は、確認メールを確認してください。`)
       }
     } catch (err) {
       console.error('予期せぬサインアップエラー:', err)
@@ -207,26 +182,7 @@ Supabaseダッシュボードの「Authentication」→「Users」からユー�
             </div>
           )}
 
-          {/* 開発者アカウント用のバイパスオプション */}
-          {showDevBypass && isDevAccount(email) && (
-            <div className="mt-4 rounded-md bg-yellow-100 p-3">
-              <div className="flex items-center">
-                <AlertTriangle className="mr-2 h-4 w-4 text-yellow-800" />
-                <p className="text-sm font-medium text-yellow-800">開発者アカウント専用</p>
-              </div>
-              <p className="mt-1 text-xs text-yellow-700">
-                開発者アカウント（{DEV_EMAIL}）として認証をバイパスします。
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-2 bg-yellow-50 text-yellow-800 hover:bg-yellow-100"
-                onClick={handleDevBypass}
-              >
-                開発者モードでログイン
-              </Button>
-            </div>
-          )}
+          {/* バイパスオプションを削除 */}
         </div>
       </div>
     </div>

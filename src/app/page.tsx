@@ -9,15 +9,15 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
-// 開発モード用のホームページ
+// ホームページ
 export default function Home() {
   const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [displayName, setDisplayName] = useState<string>('開発ユーザー');
+  const [displayName, setDisplayName] = useState<string>('ユーザー');
   const [logs, setLogs] = useState<any[]>([]);
   
-  // 開発モード用のモックユーザー
+  // モックユーザー
   const mockUser = {
     id: 'mock-user-id',
     email: 'dev@example.com'
@@ -85,9 +85,7 @@ export default function Home() {
               >
                 <LogOut className="h-4 w-4" />
               </Button>
-              <span className="text-xs text-blue-500 hidden md:inline-block">
-                （開発モード）
-              </span>
+              {/* 開発モード表示を削除 */}
             </div>
           </header>
           
@@ -119,7 +117,7 @@ export default function Home() {
 }
 
 /*
-// 本番環境用のホームページ（Supabaseプロジェクト設定後に有効化）
+// Supabase認証を使用したホームページ（Supabaseプロジェクト設定後に有効化）
 import { useSupabase } from '@/components/supabase-provider';
 
 export default function Home() {
