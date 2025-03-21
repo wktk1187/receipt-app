@@ -48,8 +48,8 @@ export default function LoginPage() {
         }
       } else {
         console.log('ログイン成功:', data)
-        // 明示的にホームページにリダイレクト
-        router.push('/')
+        // 明示的にダッシュボードページにリダイレクト
+        router.push('/dashboard')
       }
     } catch (err) {
       console.error('予期せぬログインエラー:', err)
