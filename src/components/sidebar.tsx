@@ -45,78 +45,86 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               
               {/* Notion */}
-              <div className="rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+              <div className="group rounded-lg border border-muted transition-colors hover:bg-muted/50">
                 <a
                   href={process.env.NEXT_PUBLIC_NOTION_PAGE_URL || "https://www.notion.so"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between"
+                  className="block p-4 outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
-                  <div className="flex items-center gap-3">
-                    <Database className="h-5 w-5 text-gray-600" />
-                    <div>
-                      <div className="font-medium">Notion Database</div>
-                      <div className="text-sm text-gray-500">領収書データの管理</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Database className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                      <div>
+                        <div className="font-medium group-hover:text-primary transition-colors">Notion Database</div>
+                        <div className="text-sm text-muted-foreground">領収書データの管理</div>
+                      </div>
                     </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               </div>
 
               {/* Google Drive */}
-              <div className="rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+              <div className="group rounded-lg border border-muted transition-colors hover:bg-muted/50">
                 <a
                   href={process.env.NEXT_PUBLIC_GOOGLE_DRIVE_URL || "https://drive.google.com"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between"
+                  className="block p-4 outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-gray-600" />
-                    <div>
-                      <div className="font-medium">Google Drive</div>
-                      <div className="text-sm text-gray-500">PDFファイルの保存</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                      <div>
+                        <div className="font-medium group-hover:text-primary transition-colors">Google Drive</div>
+                        <div className="text-sm text-muted-foreground">PDFファイルの保存</div>
+                      </div>
                     </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               </div>
 
               {/* マネーフォワード */}
-              <div className="rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+              <div className="group rounded-lg border border-muted transition-colors hover:bg-muted/50">
                 <a
                   href="https://moneyforward.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between"
+                  className="block p-4 outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
-                  <div className="flex items-center gap-3">
-                    <Wallet className="h-5 w-5 text-green-600" />
-                    <div>
-                      <div className="font-medium">マネーフォワード</div>
-                      <div className="text-sm text-gray-500">家計簿・経費管理</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Wallet className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                      <div>
+                        <div className="font-medium group-hover:text-primary transition-colors">マネーフォワード</div>
+                        <div className="text-sm text-muted-foreground">家計簿・経費管理</div>
+                      </div>
                     </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               </div>
 
               {/* freee */}
-              <div className="rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+              <div className="group rounded-lg border border-muted transition-colors hover:bg-muted/50">
                 <a
                   href="https://www.freee.co.jp/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between"
+                  className="block p-4 outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
-                  <div className="flex items-center gap-3">
-                    <Receipt className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <div className="font-medium">freee</div>
-                      <div className="text-sm text-gray-500">会計・確定申告</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Receipt className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                      <div>
+                        <div className="font-medium group-hover:text-primary transition-colors">freee</div>
+                        <div className="text-sm text-muted-foreground">会計・確定申告</div>
+                      </div>
                     </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
                 </a>
               </div>
             </div>

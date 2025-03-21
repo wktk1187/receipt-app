@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "buildCommand": "npm run clean && npm run build",
+        "outputDirectory": ".next"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://yjilumhoksbbagtdkedj.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqaWx1bWhva3NiYmFndGRrZWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI1MzcwMTAsImV4cCI6MjA1ODExMzAxMH0.NXjtPfWlBgTz0uDu3sWtLt9nf0b1s0Z-eNzwdy1Ybrs"
+  }
+}

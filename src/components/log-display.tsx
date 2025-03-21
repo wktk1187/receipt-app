@@ -23,37 +23,39 @@ interface LogDisplayProps {
 }
 
 export function LogDisplay({ logs = [] }: LogDisplayProps) {
+  // ステータスアイコンを取得する関数
   const getStatusIcon = (status: Log["status"]) => {
     switch (status) {
       case "complete":
         return (
-          <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-1.5 flex items-center justify-center">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+          <div className="bg-gradient-to-br from-green-400 to-green-500 rounded-full p-2 flex items-center justify-center shadow-sm">
+            <CheckCircle className="h-5 w-5 text-white" />
           </div>
         )
       case "processing":
         return (
-          <div className="bg-primary/10 rounded-full p-1.5 flex items-center justify-center">
-            <Clock className="h-4 w-4 text-primary animate-pulse" />
+          <div className="bg-gradient-to-br from-blue-400 to-blue-500 rounded-full p-2 flex items-center justify-center shadow-sm">
+            <Clock className="h-5 w-5 text-white animate-pulse" />
           </div>
         )
       case "error":
         return (
-          <div className="bg-red-100 dark:bg-red-900/30 rounded-full p-1.5 flex items-center justify-center">
-            <XCircle className="h-4 w-4 text-red-500" />
+          <div className="bg-gradient-to-br from-red-400 to-red-500 rounded-full p-2 flex items-center justify-center shadow-sm">
+            <XCircle className="h-5 w-5 text-white" />
           </div>
         )
     }
   }
 
+  // ステータスに応じたテキストカラーを取得する関数
   const getStatusClass = (status: Log["status"]) => {
     switch (status) {
       case "complete":
-        return "text-green-500 dark:text-green-400"
+        return "text-green-600 dark:text-green-400"
       case "processing":
-        return "text-primary"
+        return "text-blue-600"
       case "error":
-        return "text-red-500 dark:text-red-400"
+        return "text-red-600 dark:text-red-400"
       default:
         return "text-muted-foreground"
     }
@@ -64,67 +66,111 @@ export function LogDisplay({ logs = [] }: LogDisplayProps) {
       <ScrollArea className="h-full px-4 pb-4">
         {logs.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <Clock className="h-8 w-8 mb-2" />
-            ログはまだありません
+            <div className="bg-gray-100 p-6 rounded-full mb-4">
+              <Clock className="h-10 w-10 text-gray-400" />
+            </div>
+            <p className="text-lg font-medium text-gray-500">ログはまだありません</p>
+            <p className="text-sm text-gray-400 mt-2">領収書をアップロードすると、ここに処理ログが表示されます</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {logs.map((log, index) => (
               <div
                 key={log.id || index}
                 className={cn(
-                  "relative flex items-start gap-3 p-3 rounded-lg border transition-colors",
-                  log.status === "complete" ? "bg-green-50/50 dark:bg-green-950/30 border-green-100 dark:border-green-900" :
-                  log.status === "error" ? "bg-red-50/50 dark:bg-red-950/30 border-red-100 dark:border-red-900" :
-                  "bg-blue-50/50 dark:bg-blue-950/30 border-blue-100 dark:border-blue-900",
-                  "animate-fade-in hover:bg-card/50"
+                  "relative p-4 rounded-xl border transition-all shadow-sm hover:shadow-md",
+                  log.status === "complete" ? "bg-gradient-to-r from-green-50 to-white border-green-200" :
+                  log.status === "error" ? "bg-gradient-to-r from-red-50 to-white border-red-200" :
+                  "bg-gradient-to-r from-blue-50 to-white border-blue-200",
+                  "animate-fade-in"
                 )}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="flex-shrink-0 mt-1">
-                  {getStatusIcon(log.status)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={cn(
-                    "font-medium mb-1 break-words",
-                    getStatusClass(log.status)
-                  )}>
-                    {log.message}
-                  </p>
-                  {log.details && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
-                      {log.details.fileName && (
-                        <div className="flex items-center gap-1.5">
-                          <FileText className="h-3.5 w-3.5 text-primary/60 flex-shrink-0" />
-                          <span className="truncate">{log.details.fileName}</span>
-                        </div>
-                      )}
-                      {log.details.date && (
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="h-3.5 w-3.5 text-primary/60 flex-shrink-0" />
-                          <span>{log.details.date}</span>
-                        </div>
-                      )}
-                      {log.details.category && (
-                        <div className="flex items-center gap-1.5">
-                          <Tag className="h-3.5 w-3.5 text-primary/60 flex-shrink-0" />
-                          <span>{log.details.category}</span>
-                        </div>
-                      )}
-                      {log.details.amount && (
-                        <div className="flex items-center gap-1.5">
-                          <DollarSign className="h-3.5 w-3.5 text-primary/60 flex-shrink-0" />
-                          <span className="font-medium">{log.details.amount}</span>
-                        </div>
-                      )}
-                      {log.details.errorCode && (
-                        <div className="col-span-2 flex items-center gap-1.5 mt-1 text-red-500 bg-red-50 dark:bg-red-950/50 px-2 py-1 rounded">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          <span>エラーコード: {log.details.errorCode}</span>
-                        </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    {getStatusIcon(log.status)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className={cn(
+                        "font-semibold text-lg break-words",
+                        getStatusClass(log.status)
+                      )}>
+                        {log.message}
+                      </p>
+                      {log.timestamp && (
+                        <span className="text-xs text-gray-400">
+                          {log.timestamp.toLocaleTimeString()}
+                        </span>
                       )}
                     </div>
-                  )}
+                    
+                    {log.details && (
+                      <div className="mt-3">
+                        <div className="flex flex-wrap gap-3">
+                          {log.details.fileName && (
+                            <div className="w-full flex items-center gap-2 mb-2">
+                              <div className="bg-gray-100 p-1.5 rounded-full">
+                                <FileText className="h-4 w-4 text-gray-600" />
+                              </div>
+                              <span className="text-xs text-gray-600 truncate max-w-[200px]">{log.details.fileName}</span>
+                            </div>
+                          )}
+                          
+                          {/* 日付、金額、カテゴリを一列で3つ横に並べる - レスポンシブ対応 */}
+                          <div className="flex flex-row gap-1 w-full mt-3">
+                            {log.details.date && (
+                              <div className="flex-1 flex items-center justify-center bg-blue-50 rounded-lg py-2 px-0 md:py-2 md:px-0">
+                                <div className="bg-blue-500 p-0.5 md:p-1 rounded-full mr-0.5 md:mr-1">
+                                  <Calendar className="h-2.5 w-2.5 md:h-3 md:w-3 text-white" />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[8px] md:text-[9px] text-blue-600 uppercase font-semibold tracking-wider">日付</span>
+                                  <span className="text-[10px] md:text-xs font-medium text-blue-800">{log.details.date}</span>
+                                </div>
+                              </div>
+                            )}
+                            
+                            {log.details.amount && (
+                              <div className="flex-1 flex items-center justify-center bg-red-50 rounded-lg py-2 px-0 md:py-2 md:px-0">
+                                <div className="bg-red-500 p-0.5 md:p-1 rounded-full mr-0.5 md:mr-1">
+                                  <DollarSign className="h-2.5 w-2.5 md:h-3 md:w-3 text-white" />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[8px] md:text-[9px] text-red-600 uppercase font-semibold tracking-wider">金額</span>
+                                  <span className="text-[10px] md:text-xs font-medium text-red-800">{log.details.amount}</span>
+                                </div>
+                              </div>
+                            )}
+                            
+                            {log.details.category && (
+                              <div className="flex-1 flex items-center justify-center bg-yellow-50 rounded-lg py-2 px-0 md:py-2 md:px-0">
+                                <div className="bg-yellow-500 p-0.5 md:p-1 rounded-full mr-0.5 md:mr-1">
+                                  <Tag className="h-2.5 w-2.5 md:h-3 md:w-3 text-white" />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[8px] md:text-[9px] text-yellow-600 uppercase font-semibold tracking-wider">カテゴリ</span>
+                                  <span className="text-[10px] md:text-xs font-medium text-yellow-800">{log.details.category}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {log.details.errorCode && (
+                            <div className="w-full flex items-center gap-2 mt-2 bg-gradient-to-r from-red-50 to-red-100 px-3 py-2 rounded-lg shadow-sm">
+                              <div className="bg-red-500 p-1.5 rounded-full">
+                                <AlertTriangle className="h-3.5 w-3.5 text-white" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-red-600 uppercase font-semibold tracking-wider">エラー</span>
+                                <span className="text-sm font-medium text-red-800">コード: {log.details.errorCode}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

@@ -4,22 +4,37 @@ import { useState, useEffect } from 'react';
 import { FileUpload } from '@/components/file-upload';
 import { Sidebar } from '@/components/sidebar';
 import { LogDisplay } from '@/components/log-display';
-import { Menu, X, Sun, Moon, FileText } from 'lucide-react';
+import { Menu, X, FileText, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
+// 開発モード用のホームページ
 export default function Home() {
+  const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [displayName, setDisplayName] = useState<string>('開発ユーザー');
   const [logs, setLogs] = useState<any[]>([]);
-  const { theme, setTheme } = useTheme();
   
-  // テーマ切替のマウント後のみ実行
+  // 開発モード用のモックユーザー
+  const mockUser = {
+    id: 'mock-user-id',
+    email: 'dev@example.com'
+  };
+  
+  // ローカルストレージから表示名を取得
   useEffect(() => {
-    setMounted(true);
+    const storedName = localStorage.getItem('mockDisplayName');
+    if (storedName) {
+      setDisplayName(storedName);
+    }
   }, []);
+
+  // ログアウト処理
+  const handleLogout = async () => {
+    router.push('/login');
+  };
   
   // ログを更新する関数
   const updateLogs = (newLogs: any[]) => {
@@ -41,8 +56,9 @@ export default function Home() {
       {/* メインコンテンツ */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full flex flex-col">
-          <header className="flex justify-between items-center p-4 bg-card">
-            <div className="flex items-center gap-4">
+          <header className="flex items-center p-4 bg-card relative">
+            {/* 左側のメニューボタン */}
+            <div className="absolute left-4">
               <Button
                 variant="outline"
                 size="sm"
@@ -51,33 +67,45 @@ export default function Home() {
               >
                 <Menu className="h-4 w-4" />
               </Button>
-              <h1 className="text-xl font-semibold">領収書アップロードシステム</h1>
             </div>
-            {mounted && (
+            
+            {/* 中央のタイトル */}
+            <h1 className="text-xl font-semibold mx-auto text-center">領収書アップロードシステム</h1>
+            
+            {/* 右側のユーザー情報とログアウトボタン */}
+            <div className="absolute right-4 flex items-center gap-2">
+              <span className="hidden text-sm md:inline-block">
+                {displayName || mockUser.email}
+              </span>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="text-primary hover:text-primary/80"
+                onClick={handleLogout}
+                title="ログアウト"
               >
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                <LogOut className="h-4 w-4" />
               </Button>
-            )}
+              <span className="text-xs text-blue-500 hidden md:inline-block">
+                （開発モード）
+              </span>
+            </div>
           </header>
           
           <div className="flex-1 overflow-auto">
-            <div className="h-full grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-4 md:gap-6 p-4 md:p-6">
-              {/* 左側: ファイルアップロード */}
-              <div className="flex flex-col min-h-[300px] md:min-h-0">
+            <div className="h-full flex flex-col md:grid md:grid-cols-[1fr,2fr] gap-4 md:gap-6 p-2 md:p-6">
+              {/* モバイル表示時は順序を入れ替え */}
+              
+              {/* ファイルアップロード部分 */}
+              <div className="flex flex-col order-2 md:order-1">
                 <FileUpload onImageSelect={setSelectedImage} onLogsUpdate={updateLogs} />
               </div>
               
-              {/* 右側: 処理ログ */}
-              <div className="flex flex-col h-full min-h-[400px] md:min-h-0">
+              {/* 処理ログ部分 */}
+              <div className="flex flex-col order-1 md:order-2 mb-4 md:mb-0">
                 <div className="flex-1 bg-background/50 backdrop-blur-sm rounded-lg border shadow-sm">
-                  <div className="flex items-center gap-2 p-4">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <h2 className="text-lg font-medium">処理ログ</h2>
+                  <div className="flex items-center gap-2 p-2 md:p-4">
+                    <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                    <h2 className="text-base md:text-lg font-medium">処理ログ</h2>
                   </div>
                   <LogDisplay logs={logs} />
                 </div>
@@ -89,3 +117,70 @@ export default function Home() {
     </div>
   );
 }
+
+/*
+// 本番環境用のホームページ（Supabaseプロジェクト設定後に有効化）
+import { useSupabase } from '@/components/supabase-provider';
+
+export default function Home() {
+  const router = useRouter();
+  const { supabase, user, loading } = useSupabase();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string>('');
+  const [logs, setLogs] = useState<any[]>([]);
+  
+  // ユーザープロフィールの取得
+  useEffect(() => {
+    const getProfile = async () => {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching profile:', error);
+          return;
+        }
+
+        if (data) {
+          setDisplayName(data.display_name || '');
+        }
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+      }
+    };
+
+    getProfile();
+  }, [user, supabase]);
+
+  // ログアウト処理
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
+  
+  // 初回ログイン時にプロフィール設定ページにリダイレクト
+  useEffect(() => {
+    if (user && !displayName) {
+      router.push('/profile');
+    }
+  }, [user, displayName, router]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // ...残りのコンポーネント
+}
+*/
