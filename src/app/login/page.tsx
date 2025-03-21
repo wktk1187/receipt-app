@@ -10,7 +10,10 @@ import { Mail, Lock, AlertTriangle } from 'lucide-react'
 // 開発アカウントのメールアドレス
 const DEV_EMAIL = 'otsuka.abun@gmail.com'
 
-// 開発環境かどうかを判断
+// 開発者アカウントかどうかを判断する関数
+const isDevAccount = (email: string) => email === DEV_EMAIL
+
+// 開発環境かどうかを判断（参考用に残す）
 const isDevelopment = process.env.NODE_ENV === 'development'
 
 export default function LoginPage() {
@@ -58,12 +61,12 @@ export default function LoginPage() {
         setError(error.message)
         
         // メール確認エラーの場合、開発者アカウントのみバイパスオプションを表示
-        if (error.message.includes('Email not confirmed') && isDevelopment && email === DEV_EMAIL) {
+        if (error.message.includes('Email not confirmed') && isDevAccount(email)) {
           setShowDevBypass(true)
         } else if (error.message.includes('Email not confirmed')) {
           setError(`メールアドレスが確認されていません。確認メールを確認してください。
           
-開発環境では、Supabaseダッシュボードの「Authentication」→「Users」からユーザーを選択し、「Verify Email」ボタンをクリックしてメール確認をスキップできます。`)
+Supabaseダッシュボードの「Authentication」→「Users」からユーザーを選択し、「Verify Email」ボタンをクリックしてメール確認をスキップできます。`)
         }
       } else {
         console.log('ログイン成功:', data)
@@ -205,7 +208,7 @@ export default function LoginPage() {
           )}
 
           {/* 開発者アカウント用のバイパスオプション */}
-          {showDevBypass && isDevelopment && email === DEV_EMAIL && (
+          {showDevBypass && isDevAccount(email) && (
             <div className="mt-4 rounded-md bg-yellow-100 p-3">
               <div className="flex items-center">
                 <AlertTriangle className="mr-2 h-4 w-4 text-yellow-800" />
